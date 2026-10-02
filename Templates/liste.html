@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vatandaş Listesi — Nüfus Kayıt</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 antialiased min-h-screen p-4 md:p-8">
+
+    <div class="max-w-10xl mx-auto">
+        <!-- Başlık -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+                <p class="text-xs font-bold tracking-[0.2em] text-[#24B1B1] uppercase mb-1">Nüfus Kayıt Sistemi</p>
+                <h1 class="text-2xl font-bold text-[#007979] flex items-center gap-2">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    Vatandaş Listesi
+                </h1>
+            </div>
+            <a href="/"
+                class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-[#007979] font-semibold py-2.5 px-5 rounded-lg transition-all text-sm shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Ana Sayfa
+            </a>
+        </div>
+
+        <!-- Ana Kart -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <!-- Kart Başlığı ve Arama -->
+            <div class="border-b border-gray-100 px-6 py-4 bg-gray-50/50">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-800">Kayıtlı Vatandaşlar</h2>
+                        <p class="text-sm text-gray-500 mt-1">Toplam {{ vatandaslar|length }} kayıt görüntüleniyor</p>
+                    </div>
+
+                    <!-- Arama Kutusu -->
+                    <div class="relative w-full md:w-96">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </span>
+                        <input type="text" name="q" placeholder="Ad, soyad veya kimlik no ile ara..." hx-get="/ara"
+                            hx-trigger="keyup changed delay:300ms" hx-target="#tablo-govde" hx-swap="innerHTML"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm placeholder-gray-400 focus:outline-none focus:border-[#24B1B1] focus:ring-2 focus:ring-[#24B1B1]/20 transition-all bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tablo -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr
+                            class="border-b border-gray-100 text-left text-xs uppercase tracking-wider text-gray-500 bg-gray-50/50">
+                            <th class="py-4 px-6 font-semibold">Kimlik No</th>
+                            <th class="py-4 px-6 font-semibold">Ad</th>
+                            <th class="py-4 px-6 font-semibold">Soyad</th>
+                            <th class="py-4 px-4 font-semibold">Kızlık Soyadı</th>
+                            <th class="py-4 px-6 font-semibold">Doğum</th>
+                            <th class="py-4 px-6 font-semibold">İl/İlçe</th>
+                            <th class="py-4 px-6 font-semibold text-center">Cinsiyet</th>
+                            <th class="py-4 px-6 font-semibold">Medeni</th>
+                            <th class="py-4 px-6 font-semibold text-center">Durum</th>
+                            <th class="py-4 px-6 font-semibold">Kayıt Tarihi</th>
+                            <th class="py-4 px-6 font-semibold">Son Değişen</th>
+                            <th class="py-4 px-6 font-semibold text-right">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablo-govde" class="divide-y divide-gray-100">
+                        {% include 'satir_listesi.html' %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State (Optional - shown when no results) -->
+            <div id="empty-state" class="hidden py-16 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="mt-4 text-sm font-medium text-gray-900">Kayıt bulunamadı</h3>
+                <p class="mt-2 text-sm text-gray-500">Arama kriterlerinize uygun sonuç bulunamadı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-konteyner"></div>
+    <script>
+        document.body.addEventListener('modalKapat', function () {
+            document.getElementById('modal-konteyner').innerHTML = '';
+        });
+
+        document.body.addEventListener('modalKapatGecikmeli', function () {
+            setTimeout(function () {
+                document.getElementById('modal-konteyner').innerHTML = '';
+            }, 1500);
+        });
+
+        document.body.addEventListener('gosterBildirim', function (evt) {
+            const kutu = document.getElementById('bildirim-kutusu');
+            const el = document.createElement('div');
+            el.setAttribute('role', 'alert');
+            el.className = 'bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg shadow-lg flex items-center justify-between gap-3 mb-2 animate-pulse';
+            el.innerHTML = '<span class="text-sm font-medium">✅ ' + evt.detail.value + '</span>'
+                + '<button onclick="this.closest(\'[role=alert]\').remove()" class="text-emerald-600 font-bold text-lg">&times;</button>';
+            kutu.appendChild(el);
+            setTimeout(function () { if (el.parentElement) el.remove(); }, 5000);
+        });
+
+        // Satır güncelleme fonksiyonu — htmx.ajax ile çağrılır
+        function satirGuncelle(kimlik_no) {
+            const tr = document.getElementById('satir-' + kimlik_no);
+            if (!tr) return;
+            htmx.ajax('GET', '/vatandas-satir/' + kimlik_no, {
+                target: tr,
+                swap: 'outerHTML'
+            });
+            // Yeşil highlight efekti
+            setTimeout(function () {
+                const yeniTr = document.getElementById('satir-' + kimlik_no);
+                if (yeniTr) {
+                    yeniTr.classList.add('bg-emerald-50');
+                    setTimeout(function () { yeniTr.classList.remove('bg-emerald-50'); }, 2000);
+                }
+            }, 400);
+        }
+
+        // Kişisel bilgi güncellemesi (modalKapatGecikmeli + satirGuncelle event)
+        document.body.addEventListener('satirGuncelle', function (evt) {
+            satirGuncelle(evt.detail.value);
+        });
+
+        // Adres güncellemesi — htmx:afterRequest ile yakala (event chain güvensiz)
+        document.body.addEventListener('htmx:afterRequest', function (evt) {
+            const path = evt.detail.requestConfig && evt.detail.requestConfig.path;
+            if (path && path.startsWith('/adres-guncelle/') && evt.detail.successful) {
+                const kimlik_no = path.replace('/adres-guncelle/', '');
+                document.getElementById('modal-konteyner').innerHTML = '';
+                setTimeout(function () { satirGuncelle(kimlik_no); }, 100);
+            }
+        });
+    </script>
+
+    <div id="bildirim-kutusu" class="fixed top-4 right-4 z-50 w-80 space-y-2"></div>
+
+</body>
+
+</html>

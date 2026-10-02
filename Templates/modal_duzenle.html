@@ -1,0 +1,237 @@
+<!-- MODAL OVERLAY -->
+<div id="modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    onclick="modalKapat(event)">
+
+    <!-- MODAL KART -->
+    <div id="modal-kart"
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
+        onclick="event.stopPropagation()">
+
+        <!-- HEADER -->
+        <div class="flex items-start justify-between p-6 border-b border-gray-100">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">
+                    {{ v.ISIM | trim }} {{ v.SOYISIM | trim }}
+                </h2>
+                <p class="text-sm text-[#007979] font-mono mt-0.5">
+                    TC: {{ v.KIMLIK_NO }}
+                </p>
+            </div>
+            <button onclick="document.getElementById('modal-konteyner').innerHTML=''"
+                class="text-gray-400 hover:text-gray-700 transition-colors text-xl font-light leading-none">
+                &#10005;
+            </button>
+        </div>
+
+        <!-- SEKMELER -->
+        <div class="flex border-b border-gray-100 px-6">
+            <button id="sekme-kisisel" onclick="sekmeGec('kisisel')"
+                class="py-3 px-1 mr-6 text-sm font-medium border-b-2 border-[#007979] text-[#007979] transition-colors">
+                Kişisel Bilgiler
+            </button>
+            <button id="sekme-adres" onclick="sekmeGec('adres')"
+                class="py-3 px-1 mr-6 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-colors">
+                Adres Bilgileri
+            </button>
+        </div>
+
+        <!-- TAB 1: KISISEL BILGILER -->
+        <div id="tab-kisisel" class="p-6">
+            <form hx-post="/guncelle/{{ v.KIMLIK_NO }}" hx-target="#modal-konteyner" hx-swap="innerHTML">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label
+                            class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">İsim</label>
+                        <input type="text" name="isim" value="{{ v.ISIM | trim }}"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">Soyisim</label>
+                        <input type="text" name="soyisim" value="{{ v.SOYISIM | trim }}"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">Kızlık
+                            Soyadı</label>
+                        <input type="text" name="kizlik_soyadi" id="modal-kizlik-soyadi"
+                            value="{{ v.KIZLIK_SOYAD | trim if v.KIZLIK_SOYAD else '' }}"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979] disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">Doğum
+                            Tarihi</label>
+                        <input type="text" name="dogum_tarihi" value="{{ v.DOGUM_TARIH }}"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">Cinsiyet</label>
+                        <select name="cinsiyet" id="modal-cinsiyet"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                            <option value="E" {% if v.CINSIYET | trim=='E' %}selected{% endif %}>Erkek</option>
+                            <option value="K" {% if v.CINSIYET | trim=='K' %}selected{% endif %}>Kadin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold tracking-widest uppercase text-gray-500 mb-1">Medeni
+                            Durum</label>
+                        <select name="medeni_durum" id="modal-medeni-durum"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                            <option value="BEKAR" {% if v.MEDENI_DURUM | trim=='BEKAR' %}selected{% endif %}>Bekar
+                            </option>
+                            <option value="EVLI" {% if v.MEDENI_DURUM | trim=='EVLI' %}selected{% endif %}>Evli</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Olum checkbox -->
+                <div class="flex items-center gap-3 mb-6">
+                    <input type="checkbox" name="olum" id="olum-modal" value="E" {% if v.OLUM | trim=='E' %}checked{%
+                        endif %} class="w-4 h-4 accent-[#007979]">
+                    <label for="olum-modal" class="text-sm text-gray-700">Ölü </label>
+                </div>
+
+                <div id="modal-bildirim" class="mb-3"></div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('modal-konteyner').innerHTML=''"
+                        class="px-4 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                        İptal
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2 text-sm bg-[#007979] text-white rounded-lg font-semibold hover:bg-[#005f5f] transition-colors">
+                        Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- TAB 2: ADRES BILGILERI -->
+        <div id="tab-adres" class="p-6 hidden">
+
+            <!-- Adres Guncelleme Formu -->
+            <p class="text-xs font-semibold tracking-widest uppercase text-gray-500 mb-3">Adresi Güncelle</p>
+            <form hx-post="/adres-guncelle/{{ v.KIMLIK_NO }}" hx-swap="none">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">İl</label>
+                        <input type="text" name="SEHIR" required
+                            value="{{ guncel_adres.SEHIR | trim if guncel_adres else '' }}" placeholder="İl"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">İlçe</label>
+                        <input type="text" name="ILCE" required placeholder="İlçe"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Mahalle</label>
+                        <input type="text" name="MAHALLE" required placeholder="Mahalle"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007979]/30 focus:border-[#007979]">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mb-8">
+                    <button type="button" onclick="document.getElementById('modal-konteyner').innerHTML=''"
+                        class="px-4 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                        İptal
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2 text-sm bg-[#007979] text-white rounded-lg font-semibold hover:bg-[#005f5f] transition-colors">
+                        Adresi Güncelle
+                    </button>
+                </div>
+            </form>
+
+            <!-- ADRES GECMISI TIMELINE -->
+            <p class="text-xs font-semibold tracking-widest uppercase text-gray-500 mb-4">Adres Geçmişi</p>
+
+            {% if adresler %}
+            <div class="relative">
+                <div class="absolute left-[7px] top-3 bottom-3 w-px bg-gray-200"></div>
+                <ul class="space-y-5 pl-6">
+                    {% for adres in adresler %}
+                    <li class="relative flex items-start gap-3">
+                        {% if adres.GUNCEL_MI == 1 %}
+                        <span
+                            class="absolute -left-6 mt-1 w-3.5 h-3.5 rounded-full bg-[#007979] border-2 border-white shadow"></span>
+                        {% else %}
+                        <span
+                            class="absolute -left-6 mt-1 w-3.5 h-3.5 rounded-full bg-gray-300 border-2 border-white"></span>
+                        {% endif %}
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">
+                                {{ adres.SEHIR | trim if adres.SEHIR else '-' }},
+                                {{ adres.ILCE | trim if adres.ILCE else '-' }},
+                                {{ adres.MAHALLE | trim if adres.MAHALLE else '-' }}
+                            </p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-xs text-gray-400">
+                                    {% if adres.BASLANGIC_TARIH %}{{ adres.BASLANGIC_TARIH }}{% endif %}
+                                    -
+                                    {% if adres.BITIS_TARIH %}{{ adres.BITIS_TARIH }}{% else
+                                    %}Günümüz{% endif %}
+                                </span>
+                                {% if adres.GUNCEL_MI == 1 %}
+                                <span
+                                    class="text-[10px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Güncel</span>
+                                {% else %}
+                                <span
+                                    class="text-[10px] font-bold tracking-wider uppercase bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Eski</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <p class="text-sm text-gray-400 italic">Adres kaydı bulunamadı.</p>
+            {% endif %}
+
+        </div>
+        <!-- /tab-adres -->
+
+    </div>
+    <!-- /modal-kart -->
+</div>
+<!-- /modal-overlay -->
+
+<script>
+    function sekmeGec(hedef) {
+        document.getElementById('tab-kisisel').classList.toggle('hidden', hedef !== 'kisisel');
+        document.getElementById('tab-adres').classList.toggle('hidden', hedef !== 'adres');
+        var aktif = 'py-3 px-1 mr-6 text-sm font-medium border-b-2 border-[#007979] text-[#007979] transition-colors';
+        var pasif = 'py-3 px-1 mr-6 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-colors';
+        document.getElementById('sekme-kisisel').className = hedef === 'kisisel' ? aktif : pasif;
+        document.getElementById('sekme-adres').className = hedef === 'adres' ? aktif : pasif;
+    }
+
+    function modalKapat(event) {
+        document.getElementById('modal-konteyner').innerHTML = '';
+    }
+    const modalCinsiyet = document.getElementById('modal-cinsiyet');
+    const modalMedeniDurum = document.getElementById('modal-medeni-durum');
+    const modalKizlikSoyadi = document.getElementById('modal-kizlik-soyadi');
+
+    function modalKizlikKontrol() {
+        const aktif = modalCinsiyet.value === 'K' && modalMedeniDurum && modalMedeniDurum.value === 'EVLI';
+        modalKizlikSoyadi.disabled = !aktif;
+        if (!aktif) modalKizlikSoyadi.value = '';
+    }
+
+    if (modalCinsiyet && modalMedeniDurum && modalKizlikSoyadi) {
+
+        modalCinsiyet.addEventListener('change', modalKizlikKontrol);
+        modalMedeniDurum.addEventListener('change', modalKizlikKontrol);
+        modalKizlikKontrol();
+
+    }
+
+
+
+
+</script>

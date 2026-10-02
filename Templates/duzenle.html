@@ -1,0 +1,97 @@
+<tr id="satir-{{v.KIMLIK_NO}}" class="border-b border-blue-100 bg-blue-50">
+    <td class="py-3 pr-4 font-mono text-xs">{{v.KIMLIK_NO}} </td>
+
+    <td class="py-2 pr-2 ">
+        <input type="text" name="isim" value="{{v.ISIM|trim}}"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </td>
+
+    <td class="py-2 pr-2">
+        <input type="text" name="soyisim" value="{{v.SOYISIM|trim}}"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </td>
+
+    <td class="py-2 pr-2">
+        <input type="text" name="kizlik_soyadi" id="kizlik-edit-{{ v.KIMLIK_NO }}"
+            value="{{ v.KIZLIK_SOYAD | trim if v.KIZLIK_SOYAD else '' }}"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </td>
+
+    <td class="py-2 pr-2">
+        <input type="text" name="dogum_tarihi" value="{{v.DOGUM_TARIH}}"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </td>
+
+    <td class="py-2 pr-2">
+        <input type="text" name="sehir" value="{{ guncel_adres.SEHIR | trim if guncel_adres else '' }}" placeholder="İl"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm mb-1">
+        <input type="text" name="ilce" value="{{ guncel_adres.ILCE | trim if guncel_adres else '' }}" placeholder="İlçe"
+            class="w-full border border-gray-300 rounded px-2 py-1 text-sm mb-1">
+        <input type="text" name="mahalle" value="{{ guncel_adres.MAHALLE | trim if guncel_adres else '' }}"
+            placeholder="Mahalle" class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </td>
+
+    <td class="py-2 pr-2">
+        <select name="cinsiyet" id="cinsiyet-edit-{{ v.KIMLIK_NO }}"
+            class="border border-gray-300 rounded px-2 py-1 text-sm bg-white">
+            <option value="E" {% if v.CINSIYET | trim=='E' %}selected{% endif %}>Erkek</option>
+            <option value="K" {% if v.CINSIYET | trim=='K' %}selected{% endif %}>Kadın</option>
+        </select>
+    </td>
+
+    <td class="py-2 pr-2">
+        <select name="medeni_durum" id="medeni-edit-{{ v.KIMLIK_NO }}"
+            class="border border-gray-300 rounded px-2 py-1 text-sm">
+            <option value="BEKAR" {% if v.MEDENI_DURUM | trim=='BEKAR' %}selected{% endif %}>Bekar</option>
+            <option value="EVLI" {% if v.MEDENI_DURUM | trim=='EVLI' %}selected{% endif %}>Evli</option>
+        </select>
+    </td>
+    <td class="py-2 pr-4">
+        <input type="checkbox" name="olum" value="E" {% if v.OLUM | trim=='E' %}checked{% endif %}
+            class="w-4 h-4 accent-black">
+    </td>
+    <td class="py-2 pr-4 text-xs text-gray-400" colspan="2">—</td>
+    <td class="py-2">
+        <button hx-post="/guncelle/{{ v.KIMLIK_NO }}" hx-target="closest tr" hx-swap="outerHTML" hx-include="closest tr"
+            class="text-xs bg-green-600 text-white rounded px-3 py-1 hover:bg-green-700 mr-1">
+            Kaydet
+        </button>
+        <button hx-get="/vatandas-satir/{{ v.KIMLIK_NO }}" hx-target="closest tr" hx-swap="outerHTML"
+            class="text-xs border border-gray-300 rounded px-3 py-1 hover:bg-gray-50">
+            İptal
+        </button>
+    </td>
+</tr>
+<script>
+    (function () {
+        var cinsiyet = document.getElementById('cinsiyet-edit-{{ v.KIMLIK_NO }}');
+        var kizlikInput = document.getElementById('kizlik-edit-{{ v.KIMLIK_NO }}');
+        var medeni_durum = document.getElementById('medeni-edit-{{ v.KIMLIK_NO }}');
+
+        function guncelleCinsiyet() {
+            if (cinsiyet.value === 'E') {
+                kizlikInput.value = '';
+                kizlikInput.disabled = true;
+                kizlikInput.style.background = '#f3f4f6';
+                kizlikInput.placeholder = 'Aktif Değil';
+            } else {
+                kizlikInput.disabled = false;
+                kizlikInput.style.background = '';
+                kizlikInput.placeholder = '';
+            }
+        }
+
+        cinsiyet.addEventListener('change', guncelleCinsiyet);
+        guncelleCinsiyet(); // Sayfa açılırken de çalıştır
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+</tr>

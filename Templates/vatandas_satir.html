@@ -1,0 +1,48 @@
+<tr id="satir-{{ v.KIMLIK_NO }}" class="hover:bg-gray-50/80 transition-colors duration-200 group">
+    <td class="py-3 px-3 font-mono text-xs text-gray-600 whitespace-nowrap">{{ v.KIMLIK_NO }}</td>
+    <td class="py-3 px-3 max-w-[80px] truncate font-medium">{{ v.ISIM | trim }}</td>
+    <td class="py-3 px-3 max-w-[80px] truncate">{{ v.SOYISIM | trim }}</td>
+    <td class="py-3 px-3 max-w-[80px] truncate text-gray-500">{{ v.KIZLIK_SOYAD | trim if v.KIZLIK_SOYAD else '—' }}
+    </td>
+    <td class="py-3 px-3 whitespace-nowrap text-gray-600 text-xs">{{ v.DOGUM_TARIH if v.DOGUM_TARIH else '—' }}</td>
+    <td class="py-3 px-3 max-w-[100px] truncate text-gray-600">
+        {% if v.SEHIR %}{{ v.SEHIR | trim }} / {{ v.ILCE | trim if v.ILCE else '?' }}
+        {% else %}{{ v.SEHIR | trim if v.SEHIR else '—' }}{% endif %}
+    </td>
+    <td class="py-3 px-3 text-center">
+        {% if v.CINSIYET | trim == 'K' %}
+        <span class="text-xs bg-pink-50 text-pink-700 rounded px-2 py-0.5">K</span>
+        {% else %}
+        <span class="text-xs bg-blue-50 text-blue-700 rounded px-2 py-0.5">E</span>
+        {% endif %}
+    </td>
+    <td class="py-3 px-3 whitespace-nowrap text-xs">{{ v.MEDENI_DURUM | trim }}</td>
+    <td class="py-3 px-3 text-center">
+        {% if v.OLUM | trim == 'E' %}
+        <span class="text-xs bg-red-50 text-red-600 rounded px-2 py-0.5 font-medium">Vefat</span>
+        {% else %}
+        <span class="text-xs text-gray-400">—</span>
+        {% endif %}
+    </td>
+    <td class="py-3 px-3 text-xs text-gray-400 whitespace-nowrap">{{ v.KAYIT_TARIH.strftime('%d.%m.%Y %H:%M') if
+        v.KAYIT_TARIH else '—' }}</td>
+    <td class="py-3 px-3 text-xs whitespace-nowrap">
+        {% if v.DEGISTIREN or v.DEGISIM_TARIH %}
+        <span class="font-medium text-gray-700">{{ v.DEGISTIREN | trim if v.DEGISTIREN else '' }}</span><br>
+        <span class="text-gray-400">{{ v.DEGISIM_TARIH.strftime('%d.%m.%Y %H:%M') if v.DEGISIM_TARIH else '' }}</span>
+        {% else %}
+        <span class="text-gray-300">—</span>
+        {% endif %}
+    </td>
+    <td class="py-4 px-6 text-right">
+        <button hx-get="/duzenle-form/{{ v.KIMLIK_NO }}" hx-target="#modal-konteyner" hx-swap="innerHTML"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#007979] hover:bg-[#005f5f] text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#24B1B1]/20">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                </path>
+            </svg>
+            Düzenle
+        </button>
+    </td>
+</tr>
